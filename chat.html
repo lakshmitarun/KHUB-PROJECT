@@ -6,12 +6,10 @@
   <title>HAPPYChat - AI Assistant</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html, body {
       height: 100%;
       font-family: 'Segoe UI', sans-serif;
     }
-
     body.light {
       --bg: #ffffff;
       --text: #111111;
@@ -19,7 +17,6 @@
       --bubble-bot: #f1f5f9;
       --avatar-bg: #6366f1;
     }
-
     body.dark {
       --bg: #0f172a;
       --text: #ffffff;
@@ -27,13 +24,11 @@
       --bubble-bot: #1e293b;
       --avatar-bg: #8b5cf6;
     }
-
     body {
       background-color: var(--bg);
       color: var(--text);
       transition: background 0.3s, color 0.3s;
     }
-
     .app-container {
       max-width: 720px;
       margin: auto;
@@ -45,21 +40,19 @@
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
-
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem;
       background: var(--bubble-bot);
+      position: relative;
     }
-
     .logo-area {
       display: flex;
       align-items: center;
       gap: 0.8rem;
     }
-
     .logo-img {
       height: 52px;
       width: 52px;
@@ -71,13 +64,11 @@
       align-items: center;
       border: 2px solid black;
     }
-
     .logo-img img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
     }
-
     .logo-title {
       font-weight: bold;
       font-size: 1.2rem;
@@ -85,18 +76,15 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .logo-subtitle {
       font-size: 0.8rem;
       color: #94a3b8;
     }
-
     .header-buttons {
       display: flex;
       gap: 0.5rem;
       align-items: center;
     }
-
     .theme-toggle, .login-button {
       padding: 0.4rem 0.8rem;
       border: none;
@@ -104,13 +92,11 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     .theme-toggle { background: #facc15; }
     .login-button {
       background: linear-gradient(to right, #8b5cf6, #60a5fa);
       color: white;
     }
-
     .chat-area {
       flex: 1;
       padding: 1rem;
@@ -120,23 +106,19 @@
       gap: 1rem;
       background: var(--bg);
     }
-
     .message {
       display: flex;
       gap: 0.5rem;
       align-items: flex-start;
       white-space: pre-wrap;
     }
-
     .message.user { flex-direction: row-reverse; }
-
     .avatar {
       background: var(--avatar-bg);
       color: white;
       padding: 0.5rem;
       border-radius: 50%;
     }
-
     .bubble {
       max-width: 75%;
       padding: 1rem;
@@ -144,18 +126,15 @@
       background: var(--bubble-bot);
       word-wrap: break-word;
     }
-
     .message.user .bubble {
       background: var(--bubble-user);
       color: white;
     }
-
     .input-area {
       display: flex;
       border-top: 1px solid #ccc;
       background: var(--bubble-bot);
     }
-
     .input-area input {
       flex: 1;
       border: none;
@@ -164,7 +143,6 @@
       background: transparent;
       color: var(--text);
     }
-
     .input-area button {
       background: linear-gradient(to right, #9333ea, #3b82f6);
       color: white;
@@ -173,7 +151,6 @@
       font-size: 1.3rem;
       cursor: pointer;
     }
-
     pre {
       background: #1e293b;
       color: white;
@@ -183,13 +160,11 @@
       margin-top: 1rem;
       position: relative;
     }
-
     pre code {
       font-family: 'Courier New', monospace;
       display: block;
       white-space: pre;
     }
-
     .copy-btn {
       position: absolute;
       top: 10px;
@@ -218,7 +193,14 @@
       </div>
       <div class="header-buttons">
         <button id="themeToggle" class="theme-toggle">🌞</button>
-        <button id="loginBtn" class="login-button">Checking...</button>
+
+        <div class="user-menu" id="userMenu" style="position: relative;">
+          <button id="loginBtn" class="login-button">Checking...</button>
+          <div id="dropdown" style="display: none; position: absolute; top: 110%; right: 0; background: white; color: black; padding: 0.5rem 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 99;">
+            <div id="userEmail" style="font-size: 0.85rem; margin-bottom: 0.5rem;"></div>
+            <button id="signOutBtn" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer;">Sign Out</button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -241,10 +223,10 @@
 
     const supabase = createClient(
       'https://lmoomgeafnmijdcxzchq.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg' // ← Replace with your real anon key
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg'
     );
 
-    const API_KEY = "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"; // Groq key
+    const API_KEY = "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";
     const MODEL = "llama3-70b-8192";
 
     const themeToggle = document.getElementById("themeToggle");
@@ -252,6 +234,10 @@
     const chatInput = document.getElementById("chatInput");
     const chatArea = document.getElementById("chatArea");
     const loginBtn = document.getElementById("loginBtn");
+    const dropdown = document.getElementById("dropdown");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const userEmailDisplay = document.getElementById("userEmail");
+    const userMenu = document.getElementById("userMenu");
 
     themeToggle.onclick = () => {
       document.body.classList.toggle("dark");
@@ -259,19 +245,33 @@
       themeToggle.textContent = document.body.classList.contains("dark") ? "🌙" : "🌞";
     };
 
-    // 🔐 Check Supabase Session
     const session = await supabase.auth.getSession();
     const user = session.data.session?.user;
 
     if (user) {
-      loginBtn.textContent = "UID: " + user.id.slice(0, 8) + "…";
-      loginBtn.style.cursor = "default";
+      loginBtn.textContent = user.email;
+      userEmailDisplay.textContent = user.email;
+
+      loginBtn.onclick = () => {
+        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+      };
+
+      signOutBtn.onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.reload();
+      };
+
+      document.addEventListener("click", (e) => {
+        if (!userMenu.contains(e.target)) {
+          dropdown.style.display = "none";
+        }
+      });
+
     } else {
       loginBtn.textContent = "Login";
-      loginBtn.onclick = () => window.location.href = "login.html";
+      loginBtn.onclick = () => window.location.href = "index.html";
     }
 
-    // Handle Chat Submission
     chatForm.onsubmit = async (e) => {
       e.preventDefault();
       const userMessage = chatInput.value.trim();
@@ -313,19 +313,15 @@
       }
     };
 
-    // Helper: Add message
     function addMessage(text, isUser) {
       const msg = document.createElement("div");
       msg.className = `message ${isUser ? "user" : "bot"}`;
-
       const avatar = document.createElement("div");
       avatar.className = "avatar";
       avatar.textContent = isUser ? "🧑" : "🤖";
-
       const bubble = document.createElement("div");
       bubble.className = "bubble";
       bubble.innerHTML = formatText(text);
-
       msg.appendChild(avatar);
       msg.appendChild(bubble);
       chatArea.appendChild(msg);
@@ -348,7 +344,6 @@
       }, 100);
     }
 
-    // Format code blocks
     function formatText(text) {
       return text
         .replace(/```(?:html|css|js|javascript)?\n([\s\S]*?)```/gi, (_, code) =>
@@ -359,7 +354,7 @@
     function escapeHTML(html) {
       return html.replace(/&/g, "&amp;")
                  .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;");
+                 .replace(/>/g, "&gt;");  
     }
   </script>
 </body>
