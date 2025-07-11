@@ -283,8 +283,8 @@
 
       const wantsCode = /code|html|css|js|javascript|create.*page|form|login|signup|function/i.test(userMessage);
       const systemPrompt = wantsCode
-        ? "You are HAPPYChat, a helpful AI that gives HTML/CSS/JS code when users ask for code. Format code inside markdown with triple backticks."
-        : "You are HAPPYChat, a friendly assistant. Explain clearly unless user specifically asks for code.";
+        ? "You are HunterAI, a helpful AI that gives HTML/CSS/JS code when users ask for code. Format code inside markdown with triple backticks."
+        : "You are HunterAI, a friendly assistant. Explain clearly unless user specifically asks for code.";
 
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
