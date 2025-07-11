@@ -58,7 +58,6 @@
       display: flex;
       align-items: center;
       gap: 0.8rem;
-      
     }
 
     .logo-img {
@@ -77,17 +76,7 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      animation: moveLogo 0s linear infinite alternate;
-        }
-
-        @keyframes moveLogo {
-      from {
-        transform: translateX(-5px);
-      }
-      to {
-        transform: translateX(5px);
-      }
-        }
+    }
 
     .logo-title {
       font-weight: bold;
@@ -105,6 +94,7 @@
     .header-buttons {
       display: flex;
       gap: 0.5rem;
+      align-items: center;
     }
 
     .theme-toggle, .login-button {
@@ -218,8 +208,9 @@
   <div class="app-container">
     <header class="header">
       <div class="logo-area">
-        <div class="logo-img"><a href=""><img src="https://i.ibb.co/dskhxn47/Screenshot-2025-07-11-100819.png" alt="Logo Image">
-        </a></a></div>
+        <div class="logo-img">
+          <img src="https://i.ibb.co/dskhxn47/Screenshot-2025-07-11-100819.png" alt="Logo Image">
+        </div>
         <div>
           <h1 class="logo-title">HunterAI</h1>
           <p class="logo-subtitle">AI Assistant</p>
@@ -227,7 +218,7 @@
       </div>
       <div class="header-buttons">
         <button id="themeToggle" class="theme-toggle">🌞</button>
-        <button class="login-button">Login</button>
+        <button id="loginBtn" class="login-button">Checking...</button>
       </div>
     </header>
 
@@ -244,22 +235,44 @@
     </form>
   </div>
 
-  <script>
-    const API_KEY = "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"; // Replace with your Groq API Key
+  <!-- Supabase & Chatbot Logic -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const supabase = createClient(
+      'https://lmoomgeafnmijdcxzchq.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg' // ← Replace with your real anon key
+    );
+
+    const API_KEY = "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"; // Groq key
     const MODEL = "llama3-70b-8192";
 
     const themeToggle = document.getElementById("themeToggle");
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");
     const chatArea = document.getElementById("chatArea");
+    const loginBtn = document.getElementById("loginBtn");
 
-    themeToggle.addEventListener("click", () => {
+    themeToggle.onclick = () => {
       document.body.classList.toggle("dark");
       document.body.classList.toggle("light");
       themeToggle.textContent = document.body.classList.contains("dark") ? "🌙" : "🌞";
-    });
+    };
 
-    chatForm.addEventListener("submit", async (e) => {
+    // 🔐 Check Supabase Session
+    const session = await supabase.auth.getSession();
+    const user = session.data.session?.user;
+
+    if (user) {
+      loginBtn.textContent = "UID: " + user.id.slice(0, 8) + "…";
+      loginBtn.style.cursor = "default";
+    } else {
+      loginBtn.textContent = "Login";
+      loginBtn.onclick = () => window.location.href = "login.html";
+    }
+
+    // Handle Chat Submission
+    chatForm.onsubmit = async (e) => {
       e.preventDefault();
       const userMessage = chatInput.value.trim();
       if (!userMessage) return;
@@ -274,7 +287,7 @@
         : "You are HAPPYChat, a friendly assistant. Explain clearly unless user specifically asks for code.";
 
       try {
-        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${API_KEY}`,
@@ -289,7 +302,7 @@
           })
         });
 
-        const result = await response.json();
+        const result = await res.json();
         const reply = result?.choices?.[0]?.message?.content || "⚠️ No response";
         chatArea.lastChild.remove();
         addMessage(reply, false);
@@ -298,8 +311,9 @@
         addMessage("⚠️ Failed to get response. Try again later.", false);
         console.error(err);
       }
-    });
+    };
 
+    // Helper: Add message
     function addMessage(text, isUser) {
       const msg = document.createElement("div");
       msg.className = `message ${isUser ? "user" : "bot"}`;
@@ -317,7 +331,6 @@
       chatArea.appendChild(msg);
       chatArea.scrollTop = chatArea.scrollHeight;
 
-      // Add copy buttons
       setTimeout(() => {
         document.querySelectorAll("pre code").forEach(codeBlock => {
           if (!codeBlock.parentElement.querySelector(".copy-btn")) {
@@ -335,6 +348,7 @@
       }, 100);
     }
 
+    // Format code blocks
     function formatText(text) {
       return text
         .replace(/```(?:html|css|js|javascript)?\n([\s\S]*?)```/gi, (_, code) =>
