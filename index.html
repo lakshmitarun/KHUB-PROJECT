@@ -18,7 +18,6 @@
       --text: #111111;
       --box-bg: #f1f5f9;
       --input-bg: #fff;
-      --avatar-bg: #6366f1;
     }
 
     body.dark {
@@ -26,7 +25,6 @@
       --text: #ffffff;
       --box-bg: #1e293b;
       --input-bg: #334155;
-      --avatar-bg: #8b5cf6;
     }
 
     body {
@@ -44,19 +42,7 @@
       padding: 2rem;
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .avatar {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 1rem;
-      border-radius: 50%;
-      background: var(--avatar-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: #fff;
+      text-align: center;
     }
 
     h2 {
@@ -122,7 +108,14 @@
   <button class="theme-btn" id="themeToggle">🌞</button>
 
   <div class="container" id="authBox">
-    <div class="avatar">🧠</div>
+    <!-- ✅ Lottie Animation Here -->
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+    <dotlottie-wc 
+      src="https://lottie.host/daf7ef10-b478-4c63-bc91-ca813c47fbd1/ee1OPtUz1t.lottie" 
+      style="width: 160px; height: 160px; display: block; margin: 0 auto 1rem;" 
+      speed="1" autoplay loop>
+    </dotlottie-wc>
+
     <h2 id="formTitle">Login to HunterAI</h2>
 
     <form id="authForm">
@@ -141,12 +134,11 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-    // Replace these with your own Supabase values
     const supabaseUrl = 'https://lmoomgeafnmijdcxzchq.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg'; // Replace with your actual anon key
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb29tZ2VhZm5taWpkY3h6Y2hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMDk2NzMsImV4cCI6MjA2Nzc4NTY3M30.2LAtjy1eyQtFiuk-ZZDciw_71H88xaAxSkQPNCb5Arg';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Theme toggle logic
+    // Theme toggle
     const themeToggle = document.getElementById("themeToggle");
     themeToggle.onclick = () => {
       document.body.classList.toggle("dark");
@@ -154,7 +146,7 @@
       themeToggle.textContent = document.body.classList.contains("dark") ? "🌙" : "🌞";
     };
 
-    // Form toggle (login <-> signup)
+    // Login/signup toggle
     const toggleLink = document.getElementById("toggleLink");
     const formTitle = document.getElementById("formTitle");
     const submitBtn = document.getElementById("submitBtn");
@@ -171,7 +163,7 @@
         isLogin ? "Don’t have an account? " : "Already have an account? ";
     };
 
-    // Form submit with Supabase logic
+    // Submit form
     authForm.onsubmit = async (e) => {
       e.preventDefault();
       const email = document.getElementById("emailInput").value;
@@ -183,7 +175,7 @@
           alert("❌ " + error.message);
         } else {
           alert("✅ Logged in!");
-          window.location.href = "chat.html"; // Redirect to chat page
+          window.location.href = "chat.html";
         }
       } else {
         const { data, error } = await supabase.auth.signUp({ email, password });
