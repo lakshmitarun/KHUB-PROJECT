@@ -32,7 +32,7 @@ KHUB-PROJECT-main/
    - If you're on mobile, download the ZIP and extract it using a file manager.
    - If you're on desktop:
      ```bash
-     git clone https://github.com/your-repo/KHUB-PROJECT.git
+     git clone https://github.com//KHUB-PROJECT.git
      ```
 
 2. **Open in Browser**
@@ -48,13 +48,6 @@ KHUB-PROJECT-main/
 - JavaScript (planned, or for future use)
 - Firebase / Groq API (to be integrated)
 
----
-
-### 📸 Screenshots
-
-> Add UI screenshots here (login page & chatbot page)
-
----
 
 ### 🧠 Future Improvements
 
